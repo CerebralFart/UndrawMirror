@@ -33,4 +33,8 @@ while page is not None:
 
         time.sleep(0.5)
 
-    page = tree.xpath('//a[@href]')[-1].attrib['href']
+    aList = tree.xpath('//a[@href]')
+    if len(aList) == 0:
+        page = None
+    else:
+        page = aList[-1].attrib['href']
