@@ -1,9 +1,19 @@
+import os
 import time
 import urllib.request
 import lxml.html
 
+folder = './images/'
 host = "https://undraw.co"
 page = "/illustrations/load/0"
+
+# Remove all pre-existing images
+if os.path.isdir(folder):
+    print("Cleaning images folder")
+    for file in os.listdir(folder):
+        os.remove(folder + file)
+else:
+    os.mkdir(folder)
 
 while page is not None:
     request = urllib.request.Request(host + page)
@@ -25,7 +35,7 @@ while page is not None:
                               'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0')
         svgResponse = urllib.request.urlopen(svgRequest).read()
 
-        file = open('./images/' + svgName + '.svg', 'w')
+        file = open(folder + svgName + '.svg', 'w')
         file.write(svgResponse.decode('utf-8'))
         file.close()
 
