@@ -1,3 +1,4 @@
+import datetime
 import os
 import time
 import urllib.request
@@ -35,11 +36,14 @@ while page is not None:
                               'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0')
         svgResponse = urllib.request.urlopen(svgRequest).read()
 
-        file = open(folder + svgName + '.svg', 'w')
+        fname = folder + svgName + '.svg'
+
+        file = open(fname, 'w')
         file.write(svgResponse.decode('utf-8'))
         file.close()
 
         print("Downloaded", svgName)
+        os.system("git add \"%s\"" % fname)
 
         time.sleep(0.5)
 
@@ -48,3 +52,6 @@ while page is not None:
         page = None
     else:
         page = aList[-1].attrib['href']
+
+date = datetime.datetime.now().strftime("%d/%m/%y")
+os.system("git commit -m \"Images %s\"" % date)
