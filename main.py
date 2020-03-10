@@ -1,12 +1,17 @@
 import datetime
 import os
+import json
 import time
 import urllib.request
-import lxml.html
+
+
+def get_page(page):
+    request = urllib.request.Request(page)
+    request.add_header('User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0')
+    return urllib.request.urlopen(request).read()
+
 
 folder = './images/'
-host = "https://undraw.co"
-page = "/illustrations/load/0"
 
 # Remove all pre-existing images
 if os.path.isdir(folder):
@@ -16,42 +21,35 @@ if os.path.isdir(folder):
 else:
     os.mkdir(folder)
 
-while page is not None:
-    request = urllib.request.Request(host + page)
-    request.add_header('User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0')
-    response = urllib.request.urlopen(request).read()
+hasMore = True
+page = 0
+images = {}
 
-    print("Loaded page", page)
+while hasMore:
+    print("Loading page", page)
+    response = get_page("https://undraw.co/api/illustrations?page=" + str(page))
 
-    tree = lxml.html.fromstring(response)
+    data = json.loads(response)
+    hasMore = data['hasMore']
+    page = data['nextPage']
 
-    images = tree.xpath('//div[@class="item"]')
+    for illustration in data['illustrations']:
+        images[illustration['title']] = illustration['image']
 
-    for image in images:
-        svgPath = image.xpath('a[@data-src]')[0].attrib['data-src']
-        svgName = image.xpath('h4/text()')[0]
+print("Loaded all pages")
 
-        svgRequest = urllib.request.Request(svgPath)
-        svgRequest.add_header('User-Agent',
-                              'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0')
-        svgResponse = urllib.request.urlopen(svgRequest).read()
+for name, location in images.items():
+    image = get_page(location)
 
-        fname = folder + svgName + '.svg'
+    fname = folder + name + '.svg'
+    file = open(fname, 'w')
+    file.write(image.decode('utf-8'))
+    file.close()
 
-        file = open(fname, 'w')
-        file.write(svgResponse.decode('utf-8'))
-        file.close()
+    print("Downloaded", name)
 
-        print("Downloaded", svgName)
-        os.system("git add \"%s\"" % fname)
-
-        time.sleep(0.5)
-
-    aList = tree.xpath('//a[@href]')
-    if len(aList) == 0:
-        page = None
-    else:
-        page = aList[-1].attrib['href']
+    os.system("git add \"%s\"" % fname)
+    time.sleep(0.5)
 
 date = datetime.datetime.now().strftime("%d/%m/%y")
 os.system("git commit -m \"Images %s\"" % date)
