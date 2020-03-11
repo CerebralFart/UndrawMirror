@@ -29,7 +29,7 @@ while hasMore:
     print("Loading page", page)
     response = get_page("https://undraw.co/api/illustrations?page=" + str(page))
 
-    data = json.loads(response)
+    data = json.loads(response.decode('utf-8'))
     hasMore = data['hasMore']
     page = data['nextPage']
 
