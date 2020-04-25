@@ -23,7 +23,7 @@ else:
 
 hasMore = True
 page = 0
-images = {}
+images = []
 
 while hasMore:
     print("Loading page", page)
@@ -34,11 +34,15 @@ while hasMore:
     page = data['nextPage']
 
     for illustration in data['illustrations']:
-        images[illustration['title']] = illustration['image']
+        images.append((
+            illustration['title'],
+            illustration['image']
+        ))
 
 print("Loaded all pages")
 
-for name, location in images.items():
+for i in range(len(images)):
+    name, location = images[i]
     image = get_page(location)
 
     fname = folder + name + '.svg'
@@ -46,7 +50,7 @@ for name, location in images.items():
     file.write(image.decode('utf-8'))
     file.close()
 
-    print("Downloaded", name)
+    print("[%04d/%04d] Downloaded %s" % (i + 1, len(images), name))
 
     os.system("git add \"%s\"" % fname)
     time.sleep(0.5)
