@@ -33,7 +33,7 @@ while hasMore:
     hasMore = data['hasMore']
     page = data['nextPage']
 
-    for illustration in data['illustrations']:
+    for illustration in data['illos']:
         images.append((
             illustration['title'],
             illustration['image']
