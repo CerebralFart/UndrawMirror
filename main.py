@@ -18,6 +18,7 @@ if os.path.isdir(folder):
     print("Cleaning images folder")
     for file in os.listdir(folder):
         os.remove(folder + file)
+        os.system("git rm \"%s\"" % (folder + file))
 else:
     os.mkdir(folder)
 
