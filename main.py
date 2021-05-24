@@ -55,5 +55,5 @@ for i in range(len(images)):
     os.system("git add \"%s\"" % fname)
     time.sleep(0.5)
 
-date = datetime.datetime.now().strftime("%d/%m/%y")
+date = datetime.datetime.now().strftime("%Y-%m-%d")
 os.system("git commit -m \"Images %s\"" % date)
