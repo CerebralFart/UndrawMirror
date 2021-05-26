@@ -19,7 +19,9 @@ if os.path.isdir(folder):
     for file in os.listdir(folder):
         os.remove(folder + file)
         os.system("git rm \"%s\"" % (folder + file))
-else:
+
+# Ensure the images folder exists
+if not os.path.isdir(folder):
     os.mkdir(folder)
 
 hasMore = True
