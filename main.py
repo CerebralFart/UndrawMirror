@@ -16,9 +16,8 @@ folder = './images/'
 # Remove all pre-existing images
 if os.path.isdir(folder):
     print("Cleaning images folder")
-    for file in os.listdir(folder):
-        os.remove(folder + file)
-        os.system("git rm \"%s\"" % (folder + file))
+    os.system("rm -rf " + folder)
+    os.system("git rm -r " + folder)
 
 # Ensure the images folder exists
 if not os.path.isdir(folder):
